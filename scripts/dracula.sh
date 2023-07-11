@@ -48,6 +48,7 @@ main()
   left_icon=$(get_tmux_option "@dracula-show-left-icon" smiley)
   left_icon_bg=$(get_tmux_option "@dracula-left-icon-bg" green)
   left_icon_fg=$(get_tmux_option "@dracula-left-icon-fg" dark_gray)
+  left_icon_prefix=$(get_tmux_option "@dracula-show-left-icon-prefix" session)
   left_icon_prefix_bg=$(get_tmux_option "@dracula-left-icon-prefix-on-bg" red)
   left_icon_prefix_fg=$(get_tmux_option "@dracula-left-icon-prefix-on-fg" white)
   left_icon_padding_left=$(get_tmux_option "@dracula-left-icon-padding-left" 1)
@@ -146,6 +147,17 @@ main()
       left_icon_content=$left_icon;;
   esac
 
+  case $left_icon_prefix in
+    smiley)
+      left_icon_content_prefix="☺";;
+    session)
+      left_icon_content_prefix="#S";;
+    window)
+      left_icon_content_prefix="#W";;
+    *)
+      left_icon_content_prefix=$left_icon_prefix;;
+  esac
+
   # Handle left icon padding
   icon_pd_l=""
   if [ "$left_icon_padding_left" -gt "0" ]; then
@@ -166,7 +178,7 @@ main()
   tmux set-option -g status-left "\
 #{?client_prefix,#[fg=${!left_icon_prefix_fg}],#[fg=${!left_icon_fg}]}\
 #{?client_prefix,#[bg=${!left_icon_prefix_bg}],#[bg=${!left_icon_bg}]}\
-${icon_pd_l}${left_icon_content}${icon_pd_r}\
+${icon_pd_l}#{?client_prefix,${left_icon_content_prefix},${left_icon_content}}${icon_pd_r}\
 #{?client_prefix,#[fg=${!left_icon_prefix_bg}],#[fg=${!left_icon_bg}]}\
 #[bg=${!status_bg}]\
 ${left_sep}\
